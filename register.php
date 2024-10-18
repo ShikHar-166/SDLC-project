@@ -9,13 +9,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    // Validate password match
     if ($password !== $confirm_password) {
         echo "Passwords do not match!";
     } else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user data into the database
         $query = "INSERT INTO users (first_name, last_name, email, phone, password) 
                   VALUES ('$first_name', '$last_name', '$email', '$phone', '$hashed_password')";
         if (mysqli_query($conn, $query)) {
