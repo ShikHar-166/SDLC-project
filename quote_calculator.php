@@ -2,18 +2,17 @@
 session_start();
 include 'db_connection.php';
 
-// Check if the user is logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Function to calculate investment returns, fees, and taxes
 function calculate_investment($investment, $monthly, $plan) {
     $rate_min = 0;
     $rate_max = 0;
-    $tax_rate_1 = 0.10; // 10% for profits above £12,000
-    $tax_rate_2 = 0.20; // 20% for profits above £40,000
+    $tax_rate_1 = 0.10; 
+    $tax_rate_2 = 0.20; 
     $fees_rate = 0;
 
     switch ($plan) {
@@ -40,7 +39,7 @@ function calculate_investment($investment, $monthly, $plan) {
     }
 
     $investment_details = [];
-    $periods = [1, 5, 10]; // Investment periods
+    $periods = [1, 5, 10]; 
 
     foreach ($periods as $years) {
         $total_investment = $investment + ($monthly * 12 * $years);
@@ -49,7 +48,7 @@ function calculate_investment($investment, $monthly, $plan) {
 
         $total_fees = $total_investment * $fees_rate * $years;
 
-        // Tax calculation for managed stock plan
+        
         $tax_min = 0;
         $tax_max = 0;
 
@@ -66,12 +65,12 @@ function calculate_investment($investment, $monthly, $plan) {
                 $tax_max = ($max_return - 12000) * $tax_rate_1;
             }
         } else {
-            // Tax for other plans
+           
             $tax_min = max(0, $min_return - 12000) * $tax_rate_1;
             $tax_max = max(0, $max_return - 12000) * $tax_rate_1;
         }
 
-        // Store the results
+        
         $investment_details[$years] = [
             'min_return' => $min_return,
             'max_return' => $max_return,
@@ -91,13 +90,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $monthly_investment = $_POST['monthly'];
     $plan = $_POST['plan'];
 
-    // Validate user input
+    
     if ($initial_investment <= 0 || $monthly_investment <= 0) {
         echo "Invalid input values. Please enter valid numbers.";
         exit();
     }
 
-    // Additional Validations based on plan
+    
     switch ($plan) {
         case 'basic_savings':
             if ($monthly_investment < 50) {
@@ -143,10 +142,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
     }
 
-    // Calculate investment returns
+    
     $quote = calculate_investment($initial_investment, $monthly_investment, $plan);
 
-    // Insert the quote into the database
+    
     $query = "INSERT INTO investment_quotes (user_id, investment, plan, details) 
               VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
@@ -154,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("isss", $_SESSION['user_id'], $initial_investment, $plan, $details);
     $stmt->execute();
 
-    // Redirect to the results page to display the detailed quote
+    
     $_SESSION['quote_details'] = $quote;
     header("Location: quote_results.php");
     exit();
@@ -169,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Investment Quote Calculator</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* General Styling */
+       
         body {
             font-family: Arial, sans-serif;
             background-image: linear-gradient(to bottom right, #1E90FF, #32CD32);
@@ -257,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit">Get Quote</button>
         </form>
 
-        <!-- Display error messages or results -->
+       
         <?php if (isset($error)) { ?>
             <p style="color:red"><?= $error ?></p>
         <?php } ?>
