@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $currencies = ["GBP", "USD", "EUR", "BRL", "JPY", "TRY"];
-$rates = [ // Example exchange rates, replace with real API data.
+$rates = [ 
     "GBP" => 1.0,
     "USD" => 1.39,
     "EUR" => 1.17,
@@ -20,14 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $to = $_POST['to_currency'];
     $amount = $_POST['amount'];
 
-    // Check transaction limits
+    
     if ($amount < 300 || $amount > 5000) {
         $error = "Transaction amount must be between 300 and 5000.";
     } else {
-        // Calculate conversion
+       
         $converted = ($amount / $rates[$from]) * $rates[$to];
 
-        // Calculate fees based on the initial currency amount
+        
         if ($amount <= 500) {
             $fee = 0.035 * $amount;
         } elseif ($amount <= 1500) {
